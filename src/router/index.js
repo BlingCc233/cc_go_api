@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import LoginPage from '../views/Login.vue';
 import MainPage from '../views/Main.vue';
+import HelloWorld from '../components/HelloWorld.vue'
 import Cookies from 'js-cookie';
 
 const routes = [
@@ -16,8 +17,15 @@ const routes = [
   {
     path: '/main',
     component: MainPage,
+    children: [
+      {
+        path: '/dbs',
+        component: HelloWorld
+      }
+    ],
     meta: { requiresAuth: true } // 添加 requiresAuth 元信息
-  }
+  },
+
 ];
 
 const router = createRouter({
