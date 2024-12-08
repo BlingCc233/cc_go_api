@@ -7,10 +7,8 @@
     </t-aside>
 
     <t-content>
-      <div class="content">
         <router-view>
         </router-view>
-      </div>
     </t-content>
 
   </t-layout>
@@ -32,7 +30,6 @@ export default {
 <style>
 .main {
   height: 100vh;
-  width: 100vw;
 }
 </style>
 

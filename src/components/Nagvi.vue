@@ -1,6 +1,5 @@
-
 <template>
-  <t-menu theme="light"  default-value="item1" width="250px" @change="changeHandler">
+  <t-menu theme="light" width="250px" :value="activeItem" @change="changeHandler">
     <template #logo>
       <img height="28" src="https://tdesign.gtimg.com/site/baseLogo-light.png" alt="logo"/>
     </template>
@@ -12,22 +11,58 @@
 </template>
 
 <script lang="ts" setup>
+import { ref, onMounted, watch } from "vue";
 import router from "../router/index.js";
+import { useRoute } from "vue-router";
 
-const changeHandler = (active) => {
+const route = useRoute();
+const activeItem = ref<string>("");
 
-  console.log('change', active);
-  if (active === 'item1') {
-    router.push('/home');
+const updateActiveItem = () => {
+  switch (route.path) {
+    case "/home":
+      activeItem.value = "item1";
+      break;
+    case "/dbs":
+      activeItem.value = "item2";
+      break;
+    case "/logs":
+      activeItem.value = "item3";
+      break;
+    case "/settings":
+      activeItem.value = "item4";
+      break;
+    default:
+      activeItem.value = "";
   }
-  if (active === 'item2') {
-    router.push('/dbs');
+};
+
+onMounted(() => {
+  updateActiveItem();
+});
+
+watch(
+  () => route.path,
+  () => {
+    updateActiveItem();
   }
-  if (active === 'item3') {
-    router.push('/logs');
-  }
-  if (active === 'item4') {
-    router.push('/settings');
+);
+
+const changeHandler = (active: string) => {
+  console.log("change", active);
+  switch (active) {
+    case "item1":
+      router.push("/home");
+      break;
+    case "item2":
+      router.push("/dbs");
+      break;
+    case "item3":
+      router.push("/logs");
+      break;
+    case "item4":
+      router.push("/settings");
+      break;
   }
 };
 </script>
