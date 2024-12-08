@@ -55,7 +55,7 @@ const onSubmit = async () => {
       MessagePlugin.success('登录成功');
       Cookies.set('token', data.token, { expires: 7 });
 
-      router.push('/main');
+      router.push('/home');
       console.log(data);
     } else {
       MessagePlugin.error('登录失败');

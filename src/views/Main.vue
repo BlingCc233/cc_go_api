@@ -1,30 +1,39 @@
 <template>
-  <Nagvi class="sidebar" />
-  <div class="content">
-    <router-view></router-view>
-  </div>
+
+  <t-layout class="main">
+    <t-aside>
+      <Nagvi class="sidebar"/>
+
+    </t-aside>
+
+    <t-content>
+      <div class="content">
+        <router-view>
+        </router-view>
+      </div>
+    </t-content>
+
+  </t-layout>
+
 </template>
 
 <script>
 import Nagvi from '../components/Nagvi.vue';
+import Home from '../components/Home.vue';
 
 export default {
   components: {
-    Nagvi
+    Nagvi,
+    Home
   }
 }
 </script>
 
-<style scoped>
-  .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 250px;
-    padding: 16px;
-  }
-  .content{
-    margin-left: 250px;
-  }
+<style>
+.main {
+  height: 100vh;
+  width: 100%;
+}
 </style>
+
+

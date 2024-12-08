@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import LoginPage from '../views/Login.vue';
 import MainPage from '../views/Main.vue';
 import HelloWorld from '../components/HelloWorld.vue'
+import Home from '../components/Home.vue'
 import Cookies from 'js-cookie';
 
 const routes = [
@@ -21,7 +22,11 @@ const routes = [
       {
         path: '/dbs',
         component: HelloWorld
-      }
+      },
+        {
+          path: '/home',
+          component: Home
+        }
     ],
     meta: { requiresAuth: true } // 添加 requiresAuth 元信息
   },
@@ -38,7 +43,7 @@ router.beforeEach((to, from, next) => {
     next('/login');
   }
   if (to.meta.isLogin && isAuthenticated()){
-    next('/main');
+    next('/home');
   }
   else {
     next();
