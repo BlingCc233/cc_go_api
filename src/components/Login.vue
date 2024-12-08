@@ -2,7 +2,7 @@
   <div style="width: 350px">
     <t-form ref="form" :data="formData" :colon="true" :label-width="0" @reset="onReset" @submit="onSubmit">
       <t-form-item name="account">
-        <t-input v-model="formData.Username" clearable placeholder="请输入账户名">
+        <t-input size="large" v-model="formData.Username" clearable placeholder="请输入账户名">
           <template #prefix-icon>
             <desktop-icon/>
           </template>
@@ -10,7 +10,7 @@
       </t-form-item>
 
       <t-form-item name="password">
-        <t-input v-model="formData.password" type="password" clearable placeholder="请输入密码">
+        <t-input size="large" v-model="formData.password" type="password" clearable placeholder="请输入密码">
           <template #prefix-icon>
             <lock-on-icon/>
           </template>
@@ -18,23 +18,23 @@
       </t-form-item>
 
       <t-form-item>
-        <t-button theme="primary" type="submit" block>登录</t-button>
+        <t-button theme="warning" size="large"  shape="round" type="submit" style="outline: none" block>登录</t-button>
       </t-form-item>
     </t-form>
   </div>
 </template>
 <script setup>
-import {reactive} from 'vue';
+import {onMounted, reactive} from 'vue';
 import {MessagePlugin} from 'tdesign-vue-next';
 import {DesktopIcon, LockOnIcon} from 'tdesign-icons-vue-next';
 import router from '../router/index.js';
 import Cookies from 'js-cookie';
 
-
 const formData = reactive({
   Username: '',
   password: '',
 });
+
 
 const onReset = () => {
   MessagePlugin.success('重置成功');
@@ -53,7 +53,8 @@ const onSubmit = async () => {
     if (response.ok) {
       const data = await response.json();
       MessagePlugin.success('登录成功');
-      Cookies.set('token', data.token, { expires: 7 });
+      await Cookies.set('token', data.token, { expires: 7 });
+      await Cookies.set('user', formData.Username, { expires: 7 });
 
       router.push('/home');
       console.log(data);
