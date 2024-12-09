@@ -20,9 +20,8 @@
         </div>
       </div>
     </t-content>
-    <t-footer>
+    <t-footer style="text-align: end">
       <t-link theme="warning" @click="clearCookie" underline> 退出登录</t-link>
-
     </t-footer>
   </t-layout>
 </template>

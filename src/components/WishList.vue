@@ -2,12 +2,12 @@
   <div class="wishContainer">
     <t-typography-title level="h2">心愿单</t-typography-title>
 
-    <t-space direction="horizontal">
-      <t-input clearable size="large" v-model="newWishContent" placeholder="输入新的心愿"/>
+    <div class="inputContent">
+      <t-input clearable size="large" v-model="newWishContent" auto-width placeholder="输入新的心愿"/>
       <t-button theme="primary" size="large" type="submit" shape="round" @click="addWish(newWishContent)">确定
       </t-button>
-    </t-space>
-    <t-list header="久别" footer="必重逢" style="height: 70vh;width: 70%" :scroll="{ type: 'virtual' }">
+    </div>
+    <t-list stripe header="久别" footer="必重逢" class="wishContent" :scroll="{ type: 'virtual' }">
       <t-list-item v-for="wish in wishes.data" :key="wish.id">
         <t-list-item-meta :image="avatar(wish.creater)" :title="wish.content" :description="wish.creater"/>
         <template #action>
@@ -185,8 +185,20 @@ function editWish(wish) {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-evenly;
   align-items: center;
-  background-color: #f5f5f5;
+  background-color: #F3F3F3;
+}
+.inputContent{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  width: 500px;
+
+}
+.wishContent {
+  height: 70vh;
+  width: 70%;
+  border-radius: 20px;
 }
 </style>
