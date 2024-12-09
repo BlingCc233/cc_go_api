@@ -1,25 +1,45 @@
 <template>
-  <div>
-    <h1>心愿单</h1>
-    <input v-model="newWishContent" placeholder="输入新的心愿" />
-    <button @click="addWish(newWishContent)">添加心愿</button>
-    <ul>
-      <li v-for="wish in wishes.data" :key="wish.id">
-        <input type="checkbox" :checked="wish.checked" @change="toggleCheck(wish.id)" />
-        <span :style="{ textDecoration: wish.checked ? 'line-through' : 'none' }">{{ wish.content }}</span>
-        <button @click="deleteWish(wish.id)">删除</button>
-        <button @click="editWish(wish)">编辑</button>
-      </li>
-    </ul>
+  <div class="wishContainer">
+    <t-typography-title level="h2">心愿单</t-typography-title>
+
+    <t-space direction="horizontal">
+      <t-input clearable size="large" v-model="newWishContent" placeholder="输入新的心愿"/>
+      <t-button theme="primary" size="large" type="submit" shape="round" @click="addWish(newWishContent)">确定
+      </t-button>
+    </t-space>
+    <t-list header="久别" footer="必重逢" style="height: 70vh;width: 70%" :scroll="{ type: 'virtual' }">
+      <t-list-item v-for="wish in wishes.data" :key="wish.id">
+        <t-list-item-meta :image="avatar(wish.creater)" :title="wish.content" :description="wish.creater"/>
+        <template #action>
+      <span>
+        <input type="checkbox" :checked="wish.checked" @change="toggleCheck(wish.id)" style="margin-right: 8px"/>
+        <t-button theme="primary" variant="text" @click="deleteWish(wish.id)">删除</t-button>
+        <t-button theme="primary" variant="text" @click="editWish(wish)">编辑</t-button>
+      </span>
+        </template>
+      </t-list-item>
+    </t-list>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import {ref} from 'vue'
 import Cookies from 'js-cookie'
+import {MessagePlugin} from "tdesign-vue-next";
 
 const wishes = ref([])
 const newWishContent = ref('')
+
+const avatar = (user) => {
+  if (!user) {
+    return 'src/assets/ico.png'
+  }
+  if (user === 'blingcc')
+    return 'src/assets/ccavatar.JPG'
+  if (user === 'lzhx')
+    return 'src/assets/lzhxavatar.JPG'
+  return `src/assets/ico.png`
+}
 
 // 检查权限
 async function checkAuth() {
@@ -56,7 +76,7 @@ async function fetchWishes() {
 // 添加心愿单
 async function addWish(content) {
   if (!content.trim()) {
-    alert('请输入心愿内容')
+    MessagePlugin.warning('请输入心愿内容')
     return
   }
 
@@ -67,7 +87,7 @@ async function addWish(content) {
         'Authorization': `${Cookies.get('token')}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ 'content': content, 'creater': Cookies.get('user') })
+      body: JSON.stringify({'content': content, 'creater': Cookies.get('user')})
     })
     if (!response.ok) {
       throw new Error('Failed to add wish')
@@ -84,9 +104,12 @@ async function addWish(content) {
 // 删除心愿单
 async function deleteWish(id) {
   try {
-    await checkAuth()
+    // await checkAuth()
     const response = await fetch(`http://localhost:3051/api/delete_wish/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: {
+        Authorization: `${Cookies.get('token')}`
+      }
     })
     if (!response.ok) {
       throw new Error('Failed to delete wish')
@@ -97,6 +120,7 @@ async function deleteWish(id) {
   }
 }
 
+
 // 更新心愿单
 async function updateWish(id, content, checked) {
   try {
@@ -106,7 +130,7 @@ async function updateWish(id, content, checked) {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ content, checked })
+      body: JSON.stringify({content, checked})
     })
     if (!response.ok) {
       throw new Error('Failed to update wish')
@@ -118,10 +142,30 @@ async function updateWish(id, content, checked) {
 }
 
 // 切换心愿单的完成状态
-function toggleCheck(id) {
-  const wish = wishes.value.find(wish => wish.id === id)
-  updateWish(id, wish.content, !wish.checked)
+async function toggleCheck(id) {
+  const wish = wishes.value.data.find(wish => wish.id === id)
+  if (wish) {
+    try {
+      // await checkAuth()
+      const response = await fetch(`http://localhost:3051/api/wish_check/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `${Cookies.get('token')}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({checked: !wish.checked})
+      })
+      if (!response.ok) {
+        throw new Error('Failed to update wish status')
+      }
+      // 更新本地数据
+      wish.checked = !wish.checked
+    } catch (error) {
+      console.error('Error toggling wish check:', error)
+    }
+  }
 }
+
 
 // 初始化获取心愿单列表
 fetchWishes()
@@ -136,5 +180,13 @@ function editWish(wish) {
 </script>
 
 <style scoped>
-/* 添加一些样式 */
+.wishContainer {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #f5f5f5;
+}
 </style>
