@@ -1,0 +1,10 @@
+app:
+  name: CurrencyExchangeApp
+  port: :3051
+
+database:
+  host: localhost
+  port: :3306
+  user: root
+  password: N3do.666
+  name: currency_exchange_db
