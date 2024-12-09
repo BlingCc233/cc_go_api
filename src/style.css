@@ -59,7 +59,7 @@ button:focus-visible {
 }
 
 #app {
-  background-color: #fafafa;
+  background-color: #ffffff;
   height: 100vh;
   width: 100%;
   text-align: center;
@@ -68,6 +68,16 @@ button:focus-visible {
 
 *{
   outline: none;
+}
+
+@font-face {
+  font-family:Log;
+  src: url('./assets/Sansation-Light.ttf');
+}
+
+@font-face {
+  font-family: ChiHei;
+  src: url('./assets/MiSans-Regular.ttf');
 }
 
 @media (prefers-color-scheme: light) {

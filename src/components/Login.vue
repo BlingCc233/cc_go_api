@@ -17,9 +17,9 @@
         </t-input>
       </t-form-item>
 
-      <t-form-item>
-        <t-button theme="warning" size="large"  shape="round" type="submit" style="outline: none" block>登录</t-button>
-      </t-form-item>
+      <button submit class="loginButton">
+        登录
+      </button>
     </t-form>
   </div>
 </template>
@@ -53,8 +53,8 @@ const onSubmit = async () => {
     if (response.ok) {
       const data = await response.json();
       MessagePlugin.success('登录成功');
-      await Cookies.set('token', data.token, { expires: 7 });
-      await Cookies.set('user', formData.Username, { expires: 7 });
+      await Cookies.set('token', data.token, {expires: 7});
+      await Cookies.set('user', formData.Username, {expires: 7});
 
       router.push('/home');
       console.log(data);
@@ -68,6 +68,27 @@ const onSubmit = async () => {
   }
 };
 
-
-
 </script>
+
+<style scoped>
+.loginButton {
+  width: 100px;
+  background-color: #2f8bcc;
+  color: #fff;
+  border: none;
+  border-radius: 90px;
+  outline: none;
+  margin-top: 35px;
+  font-size: 1.1rem;
+  padding: 10px 0 10px 0;
+  transition: all 0.5s ease;
+}
+.loginButton:hover {
+  background-color: #2f8bcccc;
+  cursor: pointer;
+}
+
+.loginButton:active {
+  background-color: #2f8bcc;
+}
+</style>

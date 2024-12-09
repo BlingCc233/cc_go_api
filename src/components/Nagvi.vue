@@ -1,19 +1,20 @@
 <template>
-  <t-menu theme="light" width="250px" :value="activeItem" @change="changeHandler">
+  <t-menu theme="light" width="232px" :value="activeItem" @change="changeHandler">
     <template #logo>
-      <img height="28" src="https://tdesign.gtimg.com/site/baseLogo-light.png" alt="logo"/>
+      <img height="28" src="../assets/ico.png" alt="logo"/>
+      <span style=" font-size: 1.7rem; font-family: Log; user-select: none">BlingCc</span>
     </template>
     <t-menu-item value="item1">首页</t-menu-item>
-    <t-menu-item value="item2">count</t-menu-item>
+    <t-menu-item value="item2">心愿单</t-menu-item>
     <t-menu-item value="item3">tt1</t-menu-item>
     <t-menu-item value="item4">tt2</t-menu-item>
   </t-menu>
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, watch } from "vue";
+import {ref, onMounted, watch} from "vue";
 import router from "../router/index.js";
-import { useRoute } from "vue-router";
+import {useRoute} from "vue-router";
 
 const route = useRoute();
 const activeItem = ref<string>("");
@@ -23,13 +24,13 @@ const updateActiveItem = () => {
     case "/home":
       activeItem.value = "item1";
       break;
-    case "/dbs":
+    case "/wishlist":
       activeItem.value = "item2";
       break;
-    case "/logs":
+    case "/test":
       activeItem.value = "item3";
       break;
-    case "/settings":
+    case "/dbs":
       activeItem.value = "item4";
       break;
     default:
@@ -42,10 +43,10 @@ onMounted(() => {
 });
 
 watch(
-  () => route.path,
-  () => {
-    updateActiveItem();
-  }
+    () => route.path,
+    () => {
+      updateActiveItem();
+    }
 );
 
 const changeHandler = (active: string) => {
@@ -55,13 +56,13 @@ const changeHandler = (active: string) => {
       router.push("/home");
       break;
     case "item2":
-      router.push("/dbs");
+      router.push("/wishlist");
       break;
     case "item3":
-      router.push("/logs");
+      router.push("/test");
       break;
     case "item4":
-      router.push("/settings");
+      router.push("/dbs");
       break;
   }
 };

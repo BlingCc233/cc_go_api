@@ -32,6 +32,11 @@ export default {
 .main {
   height: 100vh;
 }
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+}
 </style>
 
 
