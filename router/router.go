@@ -19,6 +19,8 @@ func SetupRouter() *gin.Engine {
 	api := r.Group("/api")
 	api.GET("/auth", controllers.TokenVerify)
 	api.GET("/exchangeRates", controllers.GetExchangeRates)
+	api.GET("/qcs", controllers.QCSLottery)
+	api.GET("/get_wishes", controllers.GetWish)
 	api.Use(middleware.AuthMiddle())
 	{
 
@@ -30,7 +32,6 @@ func SetupRouter() *gin.Engine {
 	}
 	api.POST("/new_articles", controllers.CreatArticle)
 	api.POST("/get_articles", controllers.GetArticles)
-	api.GET("/get_wishes", controllers.GetWish)
 	return r
 
 }
