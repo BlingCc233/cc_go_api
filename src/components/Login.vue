@@ -1,6 +1,6 @@
 <template>
   <div style="width: 350px">
-    <t-form ref="form" :data="formData" :colon="true" :label-width="0" @reset="onReset" @submit="onSubmit">
+    <t-form ref="form" :data="formData" :colon="true" :label-width="0" @reset="onReset" @submit="onSubmit" style="text-align: center">
       <t-form-item name="account">
         <t-input size="large" v-model="formData.Username" clearable placeholder="请输入账户名">
           <template #prefix-icon>

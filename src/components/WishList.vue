@@ -2,20 +2,27 @@
   <div class="wishContainer">
     <t-typography-title level="h2">心愿单</t-typography-title>
 
-    <div class="inputContent">
-      <t-input clearable size="large" v-model="newWishContent" auto-width placeholder="输入新的心愿"/>
-      <t-button theme="primary" size="large" type="submit" shape="round" @click="addWish(newWishContent)">确定
+    <t-space direction="vertical" class="inputContent">
+      <t-textarea placeholder="输入新的心愿"
+                  v-model="newWishContent" autofocus autosize
+      />
+      <t-button theme="primary" type="submit" shape="round" @click="addWish(newWishContent)">确定
       </t-button>
-    </div>
+    </t-space>
     <t-list stripe header="久别" footer="必重逢" class="wishContent" :scroll="{ type: 'virtual' }">
       <t-list-item v-for="wish in wishes.data" :key="wish.id">
         <t-list-item-meta :image="avatar(wish.creater)" :title="wish.content" :description="wish.creater"/>
         <template #action>
-      <span>
-        <input type="checkbox" :checked="wish.checked" @change="toggleCheck(wish.id)" style="margin-right: 8px"/>
-        <t-button theme="primary" variant="text" @click="deleteWish(wish.id)">删除</t-button>
-        <t-button theme="primary" variant="text" @click="editWish(wish)">编辑</t-button>
-      </span>
+          <t-button variant="text" shape="square" style="margin-right: 15rem">
+            <input type="checkbox" :checked="wish.checked" @change="toggleCheck(wish.id)"/>
+          </t-button>
+          <t-button variant="text" shape="square" @click="deleteWish(wish.id)">
+            <delete-icon/>
+          </t-button>
+          <t-button variant="text" shape="square" @click="editWish(wish)">
+            <edit-icon/>
+          </t-button>
+
         </template>
       </t-list-item>
     </t-list>
@@ -26,9 +33,11 @@
 import {ref} from 'vue'
 import Cookies from 'js-cookie'
 import {MessagePlugin} from "tdesign-vue-next";
+import {DeleteIcon, EditIcon, DownloadIcon} from 'tdesign-icons-vue-next';
 
 const wishes = ref([])
 const newWishContent = ref('')
+const user = Cookies.get('user')
 
 const avatar = (user) => {
   if (!user) {
@@ -67,7 +76,7 @@ async function fetchWishes() {
       throw new Error('Failed to fetch wishes')
     }
     wishes.value = await response.json()
-    console.log(wishes.value.data)
+    sortWishes() // 排序心愿项
   } catch (error) {
     console.error('Error fetching wishes:', error)
   }
@@ -87,24 +96,28 @@ async function addWish(content) {
         'Authorization': `${Cookies.get('token')}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({'content': content, 'creater': Cookies.get('user')})
+      body: JSON.stringify({'content': content, 'creater': user})
     })
     if (!response.ok) {
       throw new Error('Failed to add wish')
     }
     const newWish = await response.json()
     wishes.value.data.push(newWish) // 先更新本地数据
-    // fetchWishes() // 刷新列表，这里可以选择是否调用
+    sortWishes() // 排序心愿项
   } catch (error) {
     console.error('Error adding wish:', error)
   }
   newWishContent.value = '' // 清空输入框
+  fetchWishes()
 }
 
 // 删除心愿单
 async function deleteWish(id) {
+  // 二次询问
+  if (!confirm('确定删除心愿吗？')) {
+    return
+  }
   try {
-    // await checkAuth()
     const response = await fetch(`http://localhost:3051/api/delete_wish/${id}`, {
       method: 'DELETE',
       headers: {
@@ -120,14 +133,13 @@ async function deleteWish(id) {
   }
 }
 
-
 // 更新心愿单
 async function updateWish(id, content, checked) {
   try {
-    await checkAuth()
     const response = await fetch(`http://localhost:3051/api/update_wish/${id}`, {
       method: 'PUT',
       headers: {
+        'Authorization': `${Cookies.get('token')}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({content, checked})
@@ -146,7 +158,6 @@ async function toggleCheck(id) {
   const wish = wishes.value.data.find(wish => wish.id === id)
   if (wish) {
     try {
-      // await checkAuth()
       const response = await fetch(`http://localhost:3051/api/wish_check/${id}`, {
         method: 'PUT',
         headers: {
@@ -160,12 +171,14 @@ async function toggleCheck(id) {
       }
       // 更新本地数据
       wish.checked = !wish.checked
+      // 等待200ms
+      await new Promise(resolve => setTimeout(resolve, 200))
+      sortWishes() // 排序心愿项
     } catch (error) {
       console.error('Error toggling wish check:', error)
     }
   }
 }
-
 
 // 初始化获取心愿单列表
 fetchWishes()
@@ -177,6 +190,27 @@ function editWish(wish) {
     updateWish(wish.id, newContent, wish.checked)
   }
 }
+
+// 排序心愿项
+function sortWishes() {
+  wishes.value.data.sort((a, b) => {
+    if (!a.checked && !b.checked) {
+      // 未勾选的心愿项按倒序排列
+      return b.id - a.id; // 假设使用 id 进行倒序排列
+    }
+    if (a.checked && !b.checked) {
+      // 已勾选的心愿项放在后面
+      return 1;
+    }
+    if (!a.checked && b.checked) {
+      // 未勾选的心愿项放在前面
+      return -1;
+    }
+    // 已勾选的心愿项按顺序排列
+    return a.id - b.id; // 假设使用 id 进行顺序排列
+  });
+}
+
 </script>
 
 <style scoped>
@@ -189,16 +223,46 @@ function editWish(wish) {
   align-items: center;
   background-color: #F3F3F3;
 }
-.inputContent{
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-  width: 500px;
 
+.inputContent {
+  text-align: center;
 }
+
 .wishContent {
   height: 70vh;
   width: 70%;
   border-radius: 20px;
+}
+
+input[type="checkbox"] {
+  appearance: none;
+  background-color: #ffffff00;
+  margin: 0;
+  font: inherit;
+  color: #d9a67e;
+  width: 2em;
+  height: 2em;
+  border: 0.3em solid currentColor;
+  border-radius: 0.6em;
+  display: grid;
+  place-content: center;
+  cursor: pointer;
+
+}
+
+input[type="checkbox"]::before {
+  /* ...existing styles */
+  background-color: #d9a67e;
+  content: "";
+  width: 1.1em;
+  height: 1.1em;
+  transform: scale(0);
+  transition: 120ms transform ease-in-out;
+  transform-origin: bottom left;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+input[type="checkbox"]:checked::before {
+  transform: scale(1);
 }
 </style>

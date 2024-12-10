@@ -1,5 +1,5 @@
 <template>
-  <t-layout>
+  <t-layout style="background-color: #F3F3F3">
     <t-content>
       <div class="home-container">
         <div class="mainLogo">

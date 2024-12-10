@@ -15,6 +15,7 @@
 *{
   font-family: ChiHei;
 }
+
 .not-found {
   text-align: center;
   padding: 50px;
@@ -36,8 +37,6 @@
   color: #666;
   padding-bottom: 20px;
 }
-
-
 
 
 .not-found-image {
