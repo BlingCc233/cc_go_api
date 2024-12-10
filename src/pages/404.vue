@@ -2,17 +2,23 @@
   <div class="not-found">
     <h1>404 - 页面未找到</h1>
     <p>抱歉，您访问的页面不存在。您可以尝试以下操作：</p>
-    <t-link theme="primary" href="/" underline> 返回首页 </t-link>
+    <t-link theme="primary" @click="goBack" underline> 返回上一级 </t-link>
   </div>
 </template>
 
 <script setup>
-// 如果需要引入其他组件或库，可以在这里引入
+// 引入必要的库
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+const goBack = () => {
+  window.history.back();
+};
 </script>
 
 <style scoped>
-
-*{
+* {
   font-family: ChiHei;
 }
 
@@ -37,7 +43,6 @@
   color: #666;
   padding-bottom: 20px;
 }
-
 
 .not-found-image {
   max-width: 300px;

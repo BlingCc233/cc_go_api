@@ -2,7 +2,7 @@
   <t-menu theme="light" width="232px" :value="activeItem" @change="changeHandler">
     <template #logo>
       <img height="28" src="../assets/ico.png" alt="logo"/>
-      <span style="font-size: 1.7rem; font-family: Log; user-select: none">BlingCc</span>
+      <span style="font-size: 1.7rem; font-family: Log; user-select: none">API</span>
     </template>
     <t-menu-item v-for="(item, index) in menuItems" :key="index" :value="`item${index + 1}`">
       {{ item.text }}
@@ -20,10 +20,10 @@ const activeItem = ref<string>("");
 
 // 定义菜单项和对应的路由
 const menuItems = [
-  { text: "首页", path: "/home" },
-  { text: "心愿单", path: "/wishlist" },
-  { text: "tt1", path: "/test" },
-  { text: "tt2", path: "/dbs" }
+  { text: "首页", path: "/api/home" },
+  { text: "心愿单", path: "/api/wishlist" },
+  { text: "tt1", path: "/api/test" },
+  { text: "tt2", path: "/api/dbs" }
 ];
 
 // 更新激活的菜单项
@@ -55,3 +55,13 @@ const changeHandler = (active: string) => {
 };
 </script>
 
+<style>
+.main {
+  height: 100vh;
+}
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+</style>

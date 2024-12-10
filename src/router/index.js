@@ -7,6 +7,7 @@ import Cookies from 'js-cookie';
 import swiper from '../pages/swiper.vue';
 import NotFount from '../pages/404.vue'
 import WishList from '../components/WishList.vue'
+import MainApi from "../pages/MainApi.vue";
 
 const routes = [
     {
@@ -32,6 +33,13 @@ const routes = [
         path: '/main',
         component: MainPage,
         children: [
+            {
+                path: '',
+                component: Home,
+                meta: {
+                    title: '首页说是',
+                },
+            },
             {
                 path: '/dbs',
                 component: HelloWorld,
@@ -71,6 +79,51 @@ const routes = [
         ],
         meta: {requiresAuth: true} // 添加 requiresAuth 元信息
     },
+    {
+        path: '/api',
+        component: MainApi,
+        meta: {
+            title: 'api'
+        },
+        children: [
+            {
+                path: '',
+                component: Home,
+                meta: {
+                    title: 'api',
+                },
+            },
+            {
+                path: '/api/home',
+                component: Home,
+                meta: {
+                    title: 'api',
+                },
+            },
+            {
+                path: '/api/test',
+                component: swiper,
+                meta: {
+                    title: 'test',
+                },
+            },
+            {
+                path: '/:pathMatch(.*)*',
+                redirect: '/404',
+                meta: {
+                    title: '404',
+                },
+            },
+            {
+                path: '/api/dbs',
+                component: HelloWorld,
+                meta: {
+                    title: 'dbs',
+                },
+            },
+        ]
+
+    }
 
 ];
 
@@ -86,7 +139,8 @@ router.beforeEach((to, from, next) => {
     }
     if (to.meta.isLogin && isAuthenticated()) {
         next('/home');
-    } else {
+    }
+    else {
         document.title = to.meta.title;
         next();
     }
