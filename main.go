@@ -12,9 +12,9 @@ func main() {
 
 	port := config.AppConfig.App.Port
 	if port == "" {
-		port = "3051"
+		port = ":3051"
 	}
 
-	r.Run(port)
+	r.Run("0.0.0.0" + port)
 
 }

@@ -26,6 +26,7 @@ func SetupRouter() *gin.Engine {
 		api.POST("/new_wish", controllers.NewWish)
 		api.DELETE("/delete_wish/:id", controllers.DeleteWish)
 		api.PUT("/wish_check/:id", controllers.WishCheck)
+		api.PUT("/update_wish/:id", controllers.WishUpdate)
 	}
 	api.POST("/new_articles", controllers.CreatArticle)
 	api.POST("/get_articles", controllers.GetArticles)

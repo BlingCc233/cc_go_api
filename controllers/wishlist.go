@@ -86,3 +86,27 @@ func WishCheck(context *gin.Context) {
 	}
 	context.JSON(http.StatusOK, gin.H{"message": "Wish checked successfully"})
 }
+
+func WishUpdate(context *gin.Context) {
+	wishlist := models.WishList{}
+	idStr := context.Param("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": "invalid id format"})
+		return
+	}
+	wishlist.ID = uint(id)
+	var form struct {
+		Content string `json:"content"`
+		Checked bool   `json:"checked"`
+	}
+	if err := context.ShouldBindJSON(&form); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	if err := global.Db.Model(&wishlist).Updates(models.WishList{Content: form.Content, Checked: form.Checked}).Error; err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{"message": "Wish updated successfully"})
+}
