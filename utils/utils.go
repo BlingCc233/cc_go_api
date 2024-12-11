@@ -27,7 +27,7 @@ func HashPassword(password string) (string, error) {
 func GenerateJWT(username string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"username": username,
-		"exp":      time.Now().Add(time.Minute * 10).Unix(),
+		"exp":      time.Now().Add(time.Hour * 72).Unix(),
 	})
 	return token.SignedString([]byte("secret"))
 }
@@ -37,24 +37,33 @@ func CheckPasswordHash(password, hash string) bool {
 	return err == nil
 }
 
-func ParseJWT(tokenString string) string {
-	tokenString = tokenString[7:]
+func ParseJWT(tokenString string) (string, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		// 验证签名方法是否符合预期
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
+		// 返回 secret，建议从配置文件或环境变量加载，而不是硬编码
 		return []byte("secret"), nil
 	})
 
 	if err != nil {
-		return ""
+		return "", fmt.Errorf("failed to parse token: %w", err)
 	}
-	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		//fmt.Printf("%v", claims)
-		return claims["username"].(string)
-	} else {
-		return ""
+
+	// 提取并验证声明
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok || !token.Valid {
+		return "", fmt.Errorf("invalid token")
 	}
+
+	// 确保 "username" 是字符串
+	username, ok := claims["username"].(string)
+	if !ok {
+		return "", fmt.Errorf("username not found or not a string in token claims")
+	}
+
+	return username, nil
 }
 
 // GenerateQCSImage creates an image based on QCS fields

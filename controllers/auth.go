@@ -28,7 +28,6 @@ func Register(context *gin.Context) {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	token = "Bearer " + token
 	global.Db.AutoMigrate(*user)
 	global.Db.Create(user)
 
@@ -51,13 +50,12 @@ func Login(context *gin.Context) {
 		return
 	}
 	token, _ := utils.GenerateJWT(user.Username)
-	token = "Bearer " + token
 	context.JSON(http.StatusOK, gin.H{"token": token})
 }
 
 func TokenVerify(context *gin.Context) {
 	token := context.GetHeader("Authorization")
-	username := utils.ParseJWT(token)
+	username, _ := utils.ParseJWT(token)
 	// 从数据库中查询用户名是否存在
 	var user models.User
 	global.Db.AutoMigrate(user)
