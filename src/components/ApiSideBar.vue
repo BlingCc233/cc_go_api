@@ -1,29 +1,39 @@
 <template>
-  <t-menu theme="light" width="232px" :value="activeItem" @change="changeHandler">
+  <t-menu theme="dark" :collapsed="isCollapsed" :value="activeItem" @change="changeHandler">
     <template #logo>
       <img height="28" src="../assets/ico.png" alt="logo"/>
-      <span style="font-size: 1.7rem; font-family: Log; user-select: none">API</span>
+      <span style="font-size: 1.7rem; font-family: Log; user-select: none; padding-left: 20px">API</span>
     </template>
-    <t-menu-item v-for="(item, index) in menuItems" :key="index" :value="`item${index + 1}`">
+    <t-menu-item v-for="(item, index) in menuItems" :key="index" :value="`item${index + 1}`" @click="selectItem(item.text)">
+      <template #icon>
+        <icon :name="item.icon"/>
+      </template>
       {{ item.text }}
     </t-menu-item>
+    <template #operations>
+      <t-button class="t-demo-collapse-btn" variant="text" shape="square" @click="changeCollapsed">
+        <template #icon><t-icon name="view-list" /></template>
+      </t-button>
+    </template>
   </t-menu>
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch } from 'vue';
 import router from "../router/index.js";
 import { useRoute } from "vue-router";
+import { Icon } from 'tdesign-icons-vue-next';
+import { defineEmits } from 'vue';
 
 const route = useRoute();
 const activeItem = ref<string>("");
 
 // 定义菜单项和对应的路由
 const menuItems = [
-  { text: "首页", path: "/api/home" },
-  { text: "心愿单", path: "/api/wishlist" },
-  { text: "tt1", path: "/api/test" },
-  { text: "tt2", path: "/api/dbs" }
+  { text: "首页", path: "/api/home", icon: "app" },
+  { text: "浅草寺抽签(图)", path: "/api/qcsimg", icon: "sticky-note" },
+  { text: "浅草寺抽签", path: "/api/qcsjson", icon: "assignment" },
+  { text: "喜报", path: "/api/goodNew", icon: "visual-recognition" }
 ];
 
 // 更新激活的菜单项
@@ -53,15 +63,32 @@ const changeHandler = (active: string) => {
     router.push(menuItems[index].path);
   }
 };
+
+const isCollapsed = ref<boolean>(true);
+const changeCollapsed = () => {
+  isCollapsed.value = !isCollapsed.value;
+};
+
+// 定义自定义事件
+const emit = defineEmits(['title-selected']);
+
+const selectItem = (title: string) => {
+  emit('title-selected', title);
+};
 </script>
 
-<style>
-.main {
-  height: 100vh;
+<style scoped>
+* {
+  outline: none;
 }
-.sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
+
+.t-demo-collapse-btn {
+  color: #fff;
+}
+
+.t-demo-collapse-btn:hover {
+  background-color: #4b4b4b;
+  border-color: transparent;
+  --ripple-color: #383838;
 }
 </style>

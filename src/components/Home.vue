@@ -20,9 +20,6 @@
         </div>
       </div>
     </t-content>
-    <t-footer style="text-align: end">
-      <t-link theme="warning" @click="clearCookie" underline> 退出登录</t-link>
-    </t-footer>
   </t-layout>
 </template>
 
@@ -58,11 +55,7 @@ onMounted(() => {
   interval = setInterval(updateCountdown, 1000);
 });
 
-const clearCookie = () => {
-  Cookies.remove('token');
-  Cookies.remove('user');
-  window.location.href = '/';
-}
+
 </script>
 
 <style scoped>

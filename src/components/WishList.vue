@@ -16,9 +16,11 @@
           <t-button variant="text" shape="square" style="margin-right: 15rem">
             <input type="checkbox" :checked="wish.checked" @change="toggleCheck(wish.id)"/>
           </t-button>
-          <t-button variant="text" shape="square" @click="deleteWish(wish.id)">
-            <delete-icon/>
-          </t-button>
+          <t-popconfirm content="确认删除吗" @confirm="deleteWish(wish.id)">
+            <t-button variant="text" shape="square" >
+              <delete-icon/>
+            </t-button>
+          </t-popconfirm>
           <t-button variant="text" shape="square" @click="editWish(wish)">
             <edit-icon/>
           </t-button>
@@ -114,9 +116,9 @@ async function addWish(content) {
 // 删除心愿单
 async function deleteWish(id) {
   // 二次询问
-  if (!confirm('确定删除心愿吗？')) {
-    return
-  }
+  // if (!confirm('确定删除心愿吗？')) {
+  //   return
+  // }
   try {
     const response = await fetch(`http://localhost:3051/api/delete_wish/${id}`, {
       method: 'DELETE',

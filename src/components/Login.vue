@@ -54,7 +54,7 @@ const onSubmit = async () => {
       const data = await response.json();
       MessagePlugin.success('登录成功');
       await Cookies.set('token', data.token, {expires: 7});
-      await Cookies.set('user', formData.Username, {expires: 7});
+      await Cookies.set('user', formData.Username, {expires:7});
 
       router.push('/home');
       console.log(data);

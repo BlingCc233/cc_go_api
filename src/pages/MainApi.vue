@@ -1,42 +1,35 @@
 <template>
-
   <t-layout class="main">
     <t-aside>
-      <Nagvi class="sidebar"/>
-
+      <ApiSideBar class="sidebar"/>
     </t-aside>
 
     <t-content>
-      <router-view>
-      </router-view>
+      <router-view></router-view>
     </t-content>
-
   </t-layout>
-
 </template>
 
 <script>
-import Nagvi from '../components/ApiSideBar.vue';
-import Home from '../components/Home.vue'
+import ApiSideBar from '../components/ApiSideBar.vue';
 
 export default {
   components: {
-    Nagvi,
-    Home
+    ApiSideBar
   }
 }
-
 </script>
 
 <style>
 .main {
   height: 100vh;
 }
+
 .sidebar {
   position: fixed;
   top: 0;
   left: 0;
+  z-index: 3;
 }
+
 </style>
-
-

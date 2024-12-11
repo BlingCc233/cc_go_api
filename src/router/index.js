@@ -8,6 +8,7 @@ import swiper from '../pages/swiper.vue';
 import NotFount from '../pages/404.vue'
 import WishList from '../components/WishList.vue'
 import MainApi from "../pages/MainApi.vue";
+import ApiCompo from "../components/ApiCompo.vue";
 
 const routes = [
     {
@@ -20,6 +21,7 @@ const routes = [
     {
         path: '/404',
         component: NotFount,
+        name: 'NotFound',
         meta: {
             title: '404',
         },
@@ -101,11 +103,13 @@ const routes = [
                 },
             },
             {
-                path: '/api/test',
-                component: swiper,
+                path: '/api/:title', // 动态子路由
+                name: 'ApiCompo',
+                component: ApiCompo,
+                props: true,
                 meta: {
-                    title: 'test',
-                },
+                    title: 'Api Detail',
+                }
             },
             {
                 path: '/:pathMatch(.*)*',
@@ -114,17 +118,9 @@ const routes = [
                     title: '404',
                 },
             },
-            {
-                path: '/api/dbs',
-                component: HelloWorld,
-                meta: {
-                    title: 'dbs',
-                },
-            },
         ]
 
     }
-
 ];
 
 const router = createRouter({
