@@ -6,11 +6,12 @@ import (
 	"net/http"
 	"studyGo/global"
 	"studyGo/models"
+	"studyGo/utils"
 	"time"
 )
 
 func QCSLottery(context *gin.Context) {
-	var qcs *models.QCS = &models.QCS{}
+	var qcs models.QCS
 
 	// 设置随机种子
 	rand.Seed(time.Now().UnixNano())
@@ -24,5 +25,12 @@ func QCSLottery(context *gin.Context) {
 		return
 	}
 
-	context.JSON(http.StatusOK, gin.H{"data": qcs})
+	// Generate image
+	imageData, err := utils.GenerateQCSImage(qcs)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	context.Data(http.StatusOK, "image/jpeg", imageData)
 }
