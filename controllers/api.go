@@ -52,3 +52,35 @@ func GetQCSJson(context *gin.Context) {
 
 	context.JSON(http.StatusOK, gin.H{"data": qcs})
 }
+
+func XBImg(context *gin.Context) {
+	var Content struct {
+		Content string `json:"content"`
+	}
+	if err := context.ShouldBindJSON(&Content); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	imageData, err := utils.GenerateXBImage(Content.Content)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	context.Data(http.StatusOK, "image/jpeg", imageData)
+}
+
+func YesNo(context *gin.Context) {
+	ans := rand.Intn(2) == 1
+	var res []string
+	if ans {
+		res = append(res, "1")
+		res = append(res, "Yes")
+		res = append(res, "是")
+	} else {
+		res = append(res, "0")
+		res = append(res, "No")
+		res = append(res, "否")
+	}
+
+	context.JSON(http.StatusOK, gin.H{"data": res})
+}

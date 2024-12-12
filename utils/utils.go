@@ -3,21 +3,23 @@ package utils
 import (
 	"bytes"
 	"fmt"
+	"github.com/golang-jwt/jwt"
 	"github.com/golang/freetype"
 	"github.com/golang/freetype/truetype"
 	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/image/draw"
 	"image"
+	"image/color"
 	"image/jpeg"
+	"image/png"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
 	"studyGo/models"
 	"time"
+	"unicode/utf8"
 )
-
-import "github.com/golang-jwt/jwt"
 
 func HashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
@@ -149,6 +151,96 @@ func GenerateQCSImage(qcs models.QCS) ([]byte, error) {
 		if err := drawMultilineText(c, pos.Text, pos.X, pos.Y, lineHeight); err != nil {
 			return nil, err
 		}
+	}
+
+	// Encode the image to a buffer
+	buffer := new(bytes.Buffer)
+	err = jpeg.Encode(buffer, overlay, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return buffer.Bytes(), nil
+}
+
+// GenerateXBImage creates an image based on goodNew fields
+func GenerateXBImage(content string) ([]byte, error) {
+	// Load background image
+	bgPath := filepath.Join(".", "assets", "xb_bg.png")
+	bgFile, err := os.Open(bgPath)
+	if err != nil {
+		return nil, err
+	}
+	defer bgFile.Close()
+
+	bgImage, err := png.Decode(bgFile)
+	if err != nil {
+		return nil, err
+	}
+
+	// Create a new RGBA image
+	overlay := image.NewRGBA(bgImage.Bounds())
+	draw.Draw(overlay, bgImage.Bounds(), bgImage, image.Point{}, draw.Src)
+
+	// Load font
+	fontPath := filepath.Join(".", "assets", "Songti.ttc") // Ensure you have a suitable font file
+	fontBytes, err := ioutil.ReadFile(fontPath)
+	if err != nil {
+		return nil, err
+	}
+
+	ttfFont, err := truetype.Parse(fontBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	// Initialize freetype context
+	c := freetype.NewContext()
+	c.SetDPI(72)
+	c.SetFont(ttfFont)
+	c.SetClip(overlay.Bounds())
+	c.SetDst(overlay)
+	c.SetFontSize(50)
+	c.SetSrc(image.NewUniform(color.RGBA{255, 0, 0, 255})) // Set text color to red
+	//c.SetSrc(image.White)
+	// Define text positions and draw with different font sizes
+	lineHeight := 60               // Line height for multi-line text
+	x := overlay.Bounds().Dx() / 2 // Center x position
+
+	// Split content into lines of max 7 characters
+	var lines []string
+	for len(content) > 0 {
+		// 获取当前字符的长度
+		r, size := utf8.DecodeRuneInString(content)
+		if size == 0 {
+			break // 如果没有更多字符，退出循环
+		}
+
+		// 如果当前行长度加上这个字符的长度超过5，则开始新的一行
+		if len(lines) > 0 && len(lines[len(lines)-1]) < 14 {
+			lines[len(lines)-1] += string(r)
+		} else {
+			lines = append(lines, string(r))
+		}
+
+		// 移动到下一个字符
+		content = content[size:]
+	}
+
+	// Draw each line centered
+	for i, line := range lines {
+		// Calculate the width of the line
+		fs := 15 // Font size
+		size := len(line)
+		if size%2 == 1 {
+			fs = 16
+		}
+		textWidth := c.PointToFixed(float64(len(line)) * float64(fs)) // Estimate width based on character count
+		// Calculate the starting position for centering
+		startX := x - (textWidth.Ceil() / 2)
+		startY := 230 + i*lineHeight // Adjust starting Y position
+		pt := freetype.Pt(startX, startY)
+		c.DrawString(line, pt)
 	}
 
 	// Encode the image to a buffer
