@@ -1,9 +1,13 @@
 <template>
   <div class="api-compo">
     <t-row align="middle" justify="space-between">
-      <t-col :span="6" style="height: 100vh" class="leftDes">
-        <div>
-          <t-typography-title level="h1">{{ apiData.title }}</t-typography-title>
+      <t-col :span="1">
+
+      </t-col>
+      <t-col :span="3" style="height: 100vh" class="leftDes">
+        <div class="topTitle">
+          <t-typography-title level="h3">{{ egweb }}</t-typography-title>
+          <t-typography-title level="h1"> /api/{{ apiData.title }}</t-typography-title>
           <t-typography-title level="h2">{{ apiData.subtitle }}</t-typography-title>
         </div>
 
@@ -33,7 +37,10 @@
         </div>
       </t-col>
 
-      <t-col :span="6">
+      <t-col :span="1">
+      </t-col>
+
+      <t-col :span="7">
         <div class="tdesign-demo-image-viewer__base" v-if="imgResponse">
           <t-image-viewer :images="[imgResponse]">
             <template #trigger="{ open }">
@@ -69,11 +76,14 @@ import 'highlight.js/lib/common'
 import router from "../router/index.js";
 import {Icon} from 'tdesign-icons-vue-next';
 import {MessagePlugin} from 'tdesign-vue-next';
+import makeApiRequest from '../utils/ApiRequest.js'
 
 
 const props = defineProps({
   title: String
 });
+
+const egweb = ref("amywxd.site:3051");
 
 const apiDictionary = [
   {
@@ -90,18 +100,34 @@ const apiDictionary = [
     subtitle: "浅草寺抽签:",
     description: "浅草寺抽签的json：\n" +
         "以json格式随机得到一张签纸，有对应的签运，解签。",
-    apiurl: "http://81.70.84.88:3051/api/qcsjson",
+    apiurl: "http://localhost:3051/api/qcsjson",
     method: "GET",
     params: {}
   },
   {
-    title: "goodNew",
+    title: "xb",
     subtitle: "喜报:",
-    description: "这是tt2的API描述",
-    apiurl: "https://api.example.com/dbs",
+    description: "生成一张喜报。",
+    apiurl: "http://localhost:3051/api/xb",
     method: "POST",
-    params: {name: "example"}
-  }
+    params: {content: "示例"}
+  },
+  {
+    title: "yesno",
+    subtitle: "是 或 否:",
+    description: "当你犹豫要不要干或者二选一的时候可以看看。",
+    apiurl: "http://localhost:3051/api/yesno",
+    method: "GET",
+    params: {}
+  },
+  {
+    title: "qqBot",
+    subtitle: "QQ机器人:",
+    description: "一个基于python的QQ机器人，请从外部访问",
+    apiurl: "https://github.com/BlingCc233/ValoBot",
+    method: "None",
+    params: {}
+  },
 ];
 
 const apiData = computed(() => {
@@ -123,28 +149,42 @@ watch(() => props.title, () => {
   imgResponse.value = null;
 });
 
+
 async function fetchApiData() {
   try {
     const url = new URL(apiData.value.apiurl);
-    for (const [key, value] of Object.entries(apiData.value.params)) {
-      url.searchParams.append(key, value);
+    const options = {
+      method: apiData.value.method,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    if (apiData.value.method === 'GET') {
+      // 添加 GET 请求的查询参数
+      for (const [key, value] of Object.entries(apiData.value.params)) {
+        url.searchParams.append(key, value);
+      }
+    } else {
+      // 其他请求类型将参数放入请求体
+      options.body = JSON.stringify(apiData.value.params);
     }
-    const res = await fetch(url, {method: apiData.value.method});
-    // 如果响应了raw的图片
+
+    const res = await fetch(url, options);
+
     if (res.headers.get('content-type').startsWith('image/')) {
       const blob = await res.blob();
       imgResponse.value = URL.createObjectURL(blob);
       return;
     }
+
     const data = await res.json();
-
     response.value = JSON.stringify(data, null, 2);
-
-
   } catch (error) {
     console.error('Error fetching API data:', error);
     response.value = 'Error fetching data';
   }
+
   // 等待 Vue 完成 DOM 更新后执行高亮
   await nextTick();
   highlightCodeBlocks();
@@ -179,7 +219,7 @@ function copyToClipboard(text) {
   width: calc(100% - 232px);
   overflow-y: scroll;
   margin-left: -232px;
-  padding-left: 260px;
+  padding-left: 232px;
 
 }
 
@@ -188,6 +228,17 @@ function copyToClipboard(text) {
   flex-direction: column;
   justify-content: space-evenly;
 
+}
+
+.topTitle {
+  border-radius: 20px;
+  background-color: #D5D5D5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 20px;
+  box-shadow: 0 0 25px 10px hsla(0, 0%, 0%, .1);
 }
 
 .response {
@@ -280,7 +331,7 @@ function copyToClipboard(text) {
 
 .tdesign-demo-image-viewer__base {
   width: 90%;
-  height: 300px;
+  height: 400px;
   margin: 10px;
   border: 4px solid var(--td-bg-color-secondarycontainer);
   border-radius: var(--td-radius-medium);

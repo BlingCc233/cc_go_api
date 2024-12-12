@@ -4,7 +4,8 @@
       <img height="28" src="../assets/ico.png" alt="logo"/>
       <span style="font-size: 1.7rem; font-family: Log; user-select: none; padding-left: 20px">API</span>
     </template>
-    <t-menu-item v-for="(item, index) in menuItems" :key="index" :value="`item${index + 1}`" @click="selectItem(item.text)">
+    <t-menu-item v-for="(item, index) in menuItems" :key="index" :value="`item${index + 1}`"
+                 @click="selectItem(item.text)">
       <template #icon>
         <icon :name="item.icon"/>
       </template>
@@ -12,28 +13,32 @@
     </t-menu-item>
     <template #operations>
       <t-button class="t-demo-collapse-btn" variant="text" shape="square" @click="changeCollapsed">
-        <template #icon><t-icon name="view-list" /></template>
+        <template #icon>
+          <t-icon name="view-list"/>
+        </template>
       </t-button>
     </template>
   </t-menu>
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, watch } from 'vue';
+import {ref, onMounted, watch} from 'vue';
 import router from "../router/index.js";
-import { useRoute } from "vue-router";
-import { Icon } from 'tdesign-icons-vue-next';
-import { defineEmits } from 'vue';
+import {useRoute} from "vue-router";
+import {Icon} from 'tdesign-icons-vue-next';
+import {defineEmits} from 'vue';
 
 const route = useRoute();
 const activeItem = ref<string>("");
 
 // 定义菜单项和对应的路由
 const menuItems = [
-  { text: "首页", path: "/api/home", icon: "app" },
-  { text: "浅草寺抽签(图)", path: "/api/qcsimg", icon: "sticky-note" },
-  { text: "浅草寺抽签", path: "/api/qcsjson", icon: "assignment" },
-  { text: "喜报", path: "/api/goodNew", icon: "visual-recognition" }
+  {text: "首页", path: "/api/home", icon: "app"},
+  {text: "浅草寺抽签(图)", path: "/api/qcsimg", icon: "sticky-note"},
+  {text: "浅草寺抽签", path: "/api/qcsjson", icon: "assignment"},
+  {text: "喜报", path: "/api/xb", icon: "visual-recognition"},
+  {text: "yes/no", path: "/api/yesno", icon: "chat-bubble-help"},
+  {text: "QQ机器人", path: "/api/qqBot", icon: "accessibility"},
 ];
 
 // 更新激活的菜单项
@@ -51,10 +56,10 @@ onMounted(() => {
 });
 
 watch(
-  () => route.path,
-  () => {
-    updateActiveItem();
-  }
+    () => route.path,
+    () => {
+      updateActiveItem();
+    }
 );
 
 const changeHandler = (active: string) => {
@@ -64,7 +69,7 @@ const changeHandler = (active: string) => {
   }
 };
 
-const isCollapsed = ref<boolean>(true);
+const isCollapsed = ref<boolean>(false);
 const changeCollapsed = () => {
   isCollapsed.value = !isCollapsed.value;
 };
