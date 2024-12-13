@@ -22,9 +22,9 @@ func SetupRouter() *gin.Engine {
 	api.GET("/qcsimg", controllers.QCSLottery)
 	api.GET("/qcsjson", controllers.GetQCSJson)
 	api.GET("/get_wishes", controllers.GetWish)
-	api.POST("/xb", controllers.XBImg)
+	api.GET("/xb", controllers.XBImg)
 	api.GET("/yesno", controllers.YesNo)
-	api.POST("/phib19", controllers.GetPhiB19)
+	api.GET("/phib19", controllers.GetPhiB19)
 	api.Use(middleware.AuthMiddle())
 	{
 

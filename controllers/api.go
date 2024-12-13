@@ -54,14 +54,8 @@ func GetQCSJson(context *gin.Context) {
 }
 
 func XBImg(context *gin.Context) {
-	var Content struct {
-		Content string `json:"content"`
-	}
-	if err := context.ShouldBindJSON(&Content); err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	imageData, err := utils.GenerateXBImage(Content.Content)
+	content := context.Query("content")
+	imageData, err := utils.GenerateXBImage(content)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -86,14 +80,9 @@ func YesNo(context *gin.Context) {
 }
 
 func GetPhiB19(context *gin.Context) {
-	var Session struct {
-		Session string `json:"session"`
-	}
-	if err := context.ShouldBindJSON(&Session); err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	phigrosData, err := utils.GenPhiB19(Session.Session)
+	session := context.Query("session")
+
+	phigrosData, err := utils.GenPhiB19(session)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

@@ -117,8 +117,8 @@ func DrawB19(accuracy float64, j phigros.UserRecord, allrks, chal, chalnum, uid 
 	canvas.Fill()
 	//version
 	_ = canvas.ParseFontFace(fontsd, 60*accuracy)
-	canvas.DrawStringAnchored("Quote From ZeroBot-Plugin", float64(w)/2-tw/2, 4342*accuracy+th/4, 0.5, 0.5)
-	canvas.DrawStringAnchored("UI Designer: eastown", float64(w)/2-tw/2, 4342*accuracy+th*2/4, 0.5, 0.5)
+	canvas.DrawStringAnchored("Quote From Jiang-Red", float64(w)/2-tw/2, 4342*accuracy+th/4, 0.5, 0.5)
+	canvas.DrawStringAnchored("Thanks to lamadaemon", float64(w)/2-tw/2, 4342*accuracy+th*2/4, 0.5, 0.5)
 	canvas.DrawStringAnchored("*Phigros B19 Picture*", float64(w)/2-tw/2, 4342*accuracy+th*3/4, 0.5, 0.5)
 
 	//头图文字
