@@ -3,8 +3,12 @@ module studyGo
 go 1.20
 
 require (
+	github.com/FloatTech/gg v1.1.3
+	github.com/disintegration/imaging v1.6.2
 	github.com/gin-gonic/gin v1.10.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
+	github.com/lianhong2758/PhigrosAPI v0.1.3-0.20241012091152-c52c60ceafff
+	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 	github.com/spf13/viper v1.19.0
 	golang.org/x/crypto v0.29.0
 	gorm.io/driver/mysql v1.5.7
@@ -18,6 +22,7 @@ require (
 	github.com/cloudwego/base64x v0.1.4 // indirect
 	github.com/cloudwego/iasm v0.2.0 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
+	github.com/fumiama/imgsz v0.0.2 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect

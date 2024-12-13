@@ -84,3 +84,19 @@ func YesNo(context *gin.Context) {
 
 	context.JSON(http.StatusOK, gin.H{"data": res})
 }
+
+func GetPhiB19(context *gin.Context) {
+	var Session struct {
+		Session string `json:"session"`
+	}
+	if err := context.ShouldBindJSON(&Session); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	phigrosData, err := utils.GenPhiB19(Session.Session)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	context.Data(http.StatusOK, "image/jpeg", phigrosData)
+}

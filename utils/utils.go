@@ -3,16 +3,10 @@ package utils
 import (
 	"bytes"
 	"fmt"
+	"github.com/FloatTech/gg"
 	"github.com/golang-jwt/jwt"
-	"github.com/golang/freetype"
-	"github.com/golang/freetype/truetype"
 	"golang.org/x/crypto/bcrypt"
-	"golang.org/x/image/draw"
-	"image"
-	"image/color"
 	"image/jpeg"
-	"image/png"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -72,50 +66,27 @@ func ParseJWT(tokenString string) (string, error) {
 func GenerateQCSImage(qcs models.QCS) ([]byte, error) {
 	// Load background image
 	bgPath := filepath.Join(".", "assets", "qcs_bg.JPG")
-	bgFile, err := os.Open(bgPath)
+	im, err := gg.LoadImage(bgPath)
 	if err != nil {
-		return nil, err
-	}
-	defer bgFile.Close()
-
-	bgImage, err := jpeg.Decode(bgFile)
-	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to load background image: %w", err)
 	}
 
-	// Create a new RGBA image
-	overlay := image.NewRGBA(bgImage.Bounds())
-	draw.Draw(overlay, bgImage.Bounds(), bgImage, image.Point{}, draw.Src)
+	dc := gg.NewContextForImage(im)
 
 	// Load font
 	fontPath := filepath.Join(".", "assets", "handwrite.ttf") // Ensure you have a suitable font file
-	fontBytes, err := ioutil.ReadFile(fontPath)
-	if err != nil {
-		return nil, err
+	if err := dc.LoadFontFace(fontPath, 50); err != nil {
+		return nil, fmt.Errorf("failed to load font: %w", err)
 	}
+	fontsd, _ := os.ReadFile(fontPath)
 
-	ttfFont, err := truetype.Parse(fontBytes)
-	if err != nil {
-		return nil, err
-	}
-
-	// Initialize freetype context
-	c := freetype.NewContext()
-	c.SetDPI(72)
-	c.SetFont(ttfFont)
-	c.SetClip(overlay.Bounds())
-	c.SetDst(overlay)
-	c.SetSrc(image.White)
+	dc.SetRGB(1, 1, 1) // Red color
 
 	// Helper to draw multi-line text
-	drawMultilineText := func(c *freetype.Context, text string, x, y, lineHeight int) error {
+	drawMultilineText := func(dc *gg.Context, text string, x, y, lineHeight int) error {
 		lines := strings.Split(text, "\n")
 		for i, line := range lines {
-			pt := freetype.Pt(x, y+(i*lineHeight))
-			_, err := c.DrawString(line, pt)
-			if err != nil {
-				return err
-			}
+			dc.DrawStringAnchored(line, float64(dc.Width())/2, float64(y+i*lineHeight), 0.5, 0.5)
 		}
 		return nil
 	}
@@ -138,7 +109,7 @@ func GenerateQCSImage(qcs models.QCS) ([]byte, error) {
 		{Text: qcs.Luck, X: 320, Y: 100, Key: "Luck"},
 		{Text: qcs.Description, X: 300, Y: 200, Key: "Description"},
 		{Text: qcs.Interpretation, X: 50, Y: 400, Key: "Interpretation"},
-		{Text: qcs.Howsas, X: 50, Y: 800, Key: "Howsas"},
+		{Text: qcs.Howsas, X: 50, Y: 850, Key: "Howsas"},
 		{Text: qcs.Luck, X: 320, Y: 760, Key: "Default"},
 	}
 
@@ -147,17 +118,16 @@ func GenerateQCSImage(qcs models.QCS) ([]byte, error) {
 		if !exists {
 			fontSize = fontSizes["Default"]
 		}
-		c.SetFontSize(fontSize)
-		if err := drawMultilineText(c, pos.Text, pos.X, pos.Y, lineHeight); err != nil {
+		dc.ParseFontFace(fontsd, fontSize)
+		if err := drawMultilineText(dc, pos.Text, pos.X, pos.Y, lineHeight); err != nil {
 			return nil, err
 		}
 	}
 
 	// Encode the image to a buffer
 	buffer := new(bytes.Buffer)
-	err = jpeg.Encode(buffer, overlay, nil)
-	if err != nil {
-		return nil, err
+	if err := jpeg.Encode(buffer, dc.Image(), nil); err != nil {
+		return nil, fmt.Errorf("failed to encode image: %w", err)
 	}
 
 	return buffer.Bytes(), nil
@@ -165,49 +135,26 @@ func GenerateQCSImage(qcs models.QCS) ([]byte, error) {
 
 // GenerateXBImage creates an image based on goodNew fields
 func GenerateXBImage(content string) ([]byte, error) {
-	// Load background image
+	// Initialize gg context
 	bgPath := filepath.Join(".", "assets", "xb_bg.png")
-	bgFile, err := os.Open(bgPath)
+	im, err := gg.LoadImage(bgPath)
 	if err != nil {
-		return nil, err
-	}
-	defer bgFile.Close()
-
-	bgImage, err := png.Decode(bgFile)
-	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to load background image: %w", err)
 	}
 
-	// Create a new RGBA image
-	overlay := image.NewRGBA(bgImage.Bounds())
-	draw.Draw(overlay, bgImage.Bounds(), bgImage, image.Point{}, draw.Src)
+	dc := gg.NewContextForImage(im)
 
 	// Load font
-	fontPath := filepath.Join(".", "assets", "Songti.ttc") // Ensure you have a suitable font file
-	fontBytes, err := ioutil.ReadFile(fontPath)
-	if err != nil {
-		return nil, err
+	fontPath := filepath.Join(".", "assets", "Songti.ttc")
+	if err := dc.LoadFontFace(fontPath, 50); err != nil {
+		return nil, fmt.Errorf("failed to load font: %w", err)
 	}
+	fontsd, _ := os.ReadFile(fontPath)
 
-	ttfFont, err := truetype.Parse(fontBytes)
-	if err != nil {
-		return nil, err
-	}
+	// Set font color
+	dc.SetRGB(1, 0, 0) // Red color
+	dc.ParseFontFace(fontsd, 50)
 
-	// Initialize freetype context
-	c := freetype.NewContext()
-	c.SetDPI(72)
-	c.SetFont(ttfFont)
-	c.SetClip(overlay.Bounds())
-	c.SetDst(overlay)
-	c.SetFontSize(50)
-	c.SetSrc(image.NewUniform(color.RGBA{255, 0, 0, 255})) // Set text color to red
-	//c.SetSrc(image.White)
-	// Define text positions and draw with different font sizes
-	lineHeight := 60               // Line height for multi-line text
-	x := overlay.Bounds().Dx() / 2 // Center x position
-
-	// Split content into lines of max 7 characters
 	var lines []string
 	for len(content) > 0 {
 		// 获取当前字符的长度
@@ -227,27 +174,21 @@ func GenerateXBImage(content string) ([]byte, error) {
 		content = content[size:]
 	}
 
+	// Calculate text block dimensions
+	lineHeight := 60.0
+	numLines := len(lines)
+	y := 270.0
+	y = y - float64(numLines)/2*lineHeight
+
 	// Draw each line centered
 	for i, line := range lines {
-		// Calculate the width of the line
-		fs := 15 // Font size
-		size := len(line)
-		if size%2 == 1 {
-			fs = 16
-		}
-		textWidth := c.PointToFixed(float64(len(line)) * float64(fs)) // Estimate width based on character count
-		// Calculate the starting position for centering
-		startX := x - (textWidth.Ceil() / 2)
-		startY := 230 + i*lineHeight // Adjust starting Y position
-		pt := freetype.Pt(startX, startY)
-		c.DrawString(line, pt)
+		dc.DrawStringAnchored(line, float64(dc.Width())/2, y+float64(i)*lineHeight, 0.5, 0.5)
 	}
 
-	// Encode the image to a buffer
+	// Encode the final image to a buffer
 	buffer := new(bytes.Buffer)
-	err = jpeg.Encode(buffer, overlay, nil)
-	if err != nil {
-		return nil, err
+	if err := jpeg.Encode(buffer, dc.Image(), nil); err != nil {
+		return nil, fmt.Errorf("failed to encode image: %w", err)
 	}
 
 	return buffer.Bytes(), nil
