@@ -83,8 +83,8 @@ const props = defineProps({
   title: String
 });
 
-const egweb = "amywxd.site";
-const egport = ":3051/api";
+const egweb = "sdk.blingcc.eu.org";
+const egport = "/api";
 
 const apiDictionary = [
   {
@@ -92,7 +92,7 @@ const apiDictionary = [
     subtitle: "浅草寺抽签:",
     description: "浅草寺抽签的图：\n" +
         "随机得到一张签纸，有对应的签运，解签。",
-    apiurl: "http://" + egweb + egport + "/qcsimg",
+    apiurl: "https://" + egweb + egport + "/qcsimg",
     method: "GET",
     params: {}
   },
@@ -101,7 +101,7 @@ const apiDictionary = [
     subtitle: "浅草寺抽签:",
     description: "浅草寺抽签的json：\n" +
         "以json格式随机得到一张签纸，有对应的签运，解签。",
-    apiurl: "http://" + egweb + egport + "/qcsjson",
+    apiurl: "https://" + egweb + egport + "/qcsjson",
     method: "GET",
     params: {}
   },
@@ -109,15 +109,15 @@ const apiDictionary = [
     title: "xb",
     subtitle: "喜报:",
     description: "生成一张喜报。",
-    apiurl: "http://" + egweb + egport + "/xb",
-    method: "POST",
+    apiurl: "https://" + egweb + egport + "/xb",
+    method: "GET",
     params: {content: "示例"}
   },
   {
     title: "yesno",
     subtitle: "是 或 否:",
     description: "当你犹豫要不要干或者二选一的时候可以看看。",
-    apiurl: "http://" + egweb + egport + "/yesno",
+    apiurl: "https://" + egweb + egport + "/yesno",
     method: "GET",
     params: {}
   },
@@ -133,8 +133,8 @@ const apiDictionary = [
     title: "phib19",
     subtitle: "Phigros成绩:",
     description: "上传你的session_token，返回你的b19成绩图。",
-    apiurl: "http://" + egweb + egport + "/phib19",
-    method: "POST",
+    apiurl: "https://" + egweb + egport + "/phib19",
+    method: "GET",
     params: {session: "nkyjch88ydrg4js83bea9jyiw"}
   },
 ];
