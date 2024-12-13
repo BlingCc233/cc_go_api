@@ -38,10 +38,11 @@
         </div>
       </t-col>
 
-      <t-col :span="1">
+      <t-col :span="2">
+        <div class="loading" v-if="loading"></div>
       </t-col>
 
-      <t-col :span="7">
+      <t-col :span="6">
         <div class="tdesign-demo-image-viewer__base" v-if="imgResponse">
           <t-image-viewer :images="[imgResponse]">
             <template #trigger="{ open }">
@@ -85,6 +86,7 @@ const props = defineProps({
 
 const egweb = "sdk.blingcc.eu.org";
 const egport = "/api";
+const loading = ref(false)
 
 const apiDictionary = [
   {
@@ -160,6 +162,7 @@ watch(() => props.title, () => {
 
 
 async function fetchApiData() {
+  loading.value = true;
   try {
     const url = new URL(apiData.value.apiurl);
     const options = {
@@ -194,6 +197,8 @@ async function fetchApiData() {
   } catch (error) {
     console.error('Error fetching API data:', error);
     response.value = 'Error fetching data';
+  } finally {
+    loading.value = false;
   }
 
   // 等待 Vue 完成 DOM 更新后执行高亮
@@ -351,6 +356,45 @@ function copyToClipboard(text) {
   border-radius: var(--td-radius-medium);
   margin-top: 20px;
   box-shadow: 0 0 25px 10px hsla(0, 0%, 0%, .1);
+}
+
+
+.loading {
+  position: relative;
+  width: 50px;
+  perspective: 200px;
+}
+
+.loading:before,
+.loading:after {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  content: "";
+  animation: jumping 0.5s infinite alternate;
+  background: rgba(0, 0, 0, 0);
+}
+
+.loading:before {
+  left: 0;
+}
+
+.loading:after {
+  right: 0;
+  animation-delay: 0.15s;
+}
+
+@keyframes jumping {
+  0% {
+    transform: scale(1) translateY(0px) rotateX(0deg);
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  }
+
+  100% {
+    transform: scale(1.2) translateY(-25px) rotateX(45deg);
+    background: #000;
+    box-shadow: 0 25px 40px #000;
+  }
 }
 
 </style>
