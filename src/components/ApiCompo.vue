@@ -6,9 +6,10 @@
       </t-col>
       <t-col :span="3" style="height: 100vh" class="leftDes">
         <div class="topTitle">
-          <t-typography-title level="h3">{{ egweb }}</t-typography-title>
-          <t-typography-title level="h1"> /api/{{ apiData.title }}</t-typography-title>
           <t-typography-title level="h2">{{ apiData.subtitle }}</t-typography-title>
+          <t-typography-title level="h4">{{ egweb }}</t-typography-title>
+          <t-typography-title level="h4">{{ egport }}</t-typography-title>
+          <t-typography-title level="h2"> {{ apiData.title }}</t-typography-title>
         </div>
 
         <div>
@@ -54,7 +55,7 @@
           </t-image-viewer>
         </div>
         <div class="response">
-      <pre v-if="response" :key="response">
+      <pre v-if="response" :key="randKey">
               <t-button variant="text" shape="round" theme="warning" @click="copyToClipboard(response)" ghost>
                 复制
               </t-button>
@@ -76,14 +77,14 @@ import 'highlight.js/lib/common'
 import router from "../router/index.js";
 import {Icon} from 'tdesign-icons-vue-next';
 import {MessagePlugin} from 'tdesign-vue-next';
-import makeApiRequest from '../utils/ApiRequest.js'
 
 
 const props = defineProps({
   title: String
 });
 
-const egweb = ref("amywxd.site:3051");
+const egweb = "amywxd.site";
+const egport = ":3051/api";
 
 const apiDictionary = [
   {
@@ -91,7 +92,7 @@ const apiDictionary = [
     subtitle: "浅草寺抽签:",
     description: "浅草寺抽签的图：\n" +
         "随机得到一张签纸，有对应的签运，解签。",
-    apiurl: "http://localhost:3051/api/qcsimg",
+    apiurl: "http://" + egweb + egport + "/qcsimg",
     method: "GET",
     params: {}
   },
@@ -100,7 +101,7 @@ const apiDictionary = [
     subtitle: "浅草寺抽签:",
     description: "浅草寺抽签的json：\n" +
         "以json格式随机得到一张签纸，有对应的签运，解签。",
-    apiurl: "http://localhost:3051/api/qcsjson",
+    apiurl: "http://" + egweb + egport + "/qcsjson",
     method: "GET",
     params: {}
   },
@@ -108,7 +109,7 @@ const apiDictionary = [
     title: "xb",
     subtitle: "喜报:",
     description: "生成一张喜报。",
-    apiurl: "http://localhost:3051/api/xb",
+    apiurl: "http://" + egweb + egport + "/xb",
     method: "POST",
     params: {content: "示例"}
   },
@@ -116,7 +117,7 @@ const apiDictionary = [
     title: "yesno",
     subtitle: "是 或 否:",
     description: "当你犹豫要不要干或者二选一的时候可以看看。",
-    apiurl: "http://localhost:3051/api/yesno",
+    apiurl: "http://" + egweb + egport + "/yesno",
     method: "GET",
     params: {}
   },
@@ -127,6 +128,14 @@ const apiDictionary = [
     apiurl: "https://github.com/BlingCc233/ValoBot",
     method: "None",
     params: {}
+  },
+  {
+    title: "phib19",
+    subtitle: "Phigros成绩:",
+    description: "上传你的session_token，返回你的b19成绩图。",
+    apiurl: "http://" + egweb + egport + "/phib19",
+    method: "POST",
+    params: {session: "nkyjch88ydrg4js83bea9jyiw"}
   },
 ];
 
@@ -141,7 +150,7 @@ const apiData = computed(() => {
 
 const response = ref(null);
 const imgResponse = ref(null);
-
+const randKey = ref(null);
 
 // 监听title的变化，当title变化时重置response
 watch(() => props.title, () => {
@@ -179,6 +188,8 @@ async function fetchApiData() {
     }
 
     const data = await res.json();
+    // 生成一个随机数
+    randKey.value = Math.random().toString(36).substring(2, 15);
     response.value = JSON.stringify(data, null, 2);
   } catch (error) {
     console.error('Error fetching API data:', error);
@@ -188,6 +199,7 @@ async function fetchApiData() {
   // 等待 Vue 完成 DOM 更新后执行高亮
   await nextTick();
   highlightCodeBlocks();
+
 }
 
 
@@ -197,6 +209,7 @@ function highlightCodeBlocks() {
     block.innerHTML = '';
     block.textContent = response.value; // 用纯文本填充
     hljs.highlightElement(block); // 高亮重新填充后的内容
+
   });
 }
 
@@ -205,6 +218,7 @@ function copyToClipboard(text) {
   navigator.clipboard.writeText(text).then(() => {
     MessagePlugin.success('已复制到剪贴板');
   }).catch(err => {
+    MessagePlugin.error('复制失败');
     console.error('无法复制文本: ', err);
   });
 }
