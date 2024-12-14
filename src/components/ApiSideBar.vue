@@ -34,12 +34,12 @@ const activeItem = ref<string>("");
 // 定义菜单项和对应的路由
 const menuItems = [
   {text: "首页", path: "/api/home", icon: "app"},
-  {text: "浅草寺抽签(图)", path: "/api/qcsimg", icon: "sticky-note"},
-  {text: "浅草寺抽签", path: "/api/qcsjson", icon: "assignment"},
+  {text: "浅草寺抽签", path: "/api/qcs", icon: "sticky-note"},
   {text: "喜报", path: "/api/xb", icon: "visual-recognition"},
   {text: "yes/no", path: "/api/yesno", icon: "chat-bubble-help"},
   {text: "QQ机器人", path: "/api/qqBot", icon: "accessibility"},
-  {text: "Phi成绩", path: "/api/phib19", icon: "collage"}
+  {text: "Phi成绩", path: "/api/phib19", icon: "collage"},
+  {text: "二维码生成", path: "/api/t2qr", icon: "qrcode"}
 ];
 
 // 更新激活的菜单项

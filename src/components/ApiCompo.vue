@@ -17,7 +17,7 @@
             {{ apiData.description }}
           </t-typography-paragraph>
 
-          <t-link theme="primary" underline :href="apiData.apiurl" target="_blank">
+          <t-link theme="primary" underline :href="fullApiUrl" target="_blank">
             <template #suffix-icon>
               <icon name="jump"/>
             </template>
@@ -84,34 +84,35 @@ const props = defineProps({
   title: String
 });
 
-const egweb = "sdk.blingcc.eu.org";
-const egport = "/api";
-const loading = ref(false)
+const egweb = import.meta.env.VITE_API_URL;
+const egport = import.meta.env.VITE_APP_API_PORT ? `:${import.meta.env.VITE_APP_API_PORT}` + '/api' : '/api';
+const loading = ref(false);
+const response = ref(null);
+const imgResponse = ref(null);
+const randKey = ref(null);
+
+// 监听title的变化，当title变化时重置response
+watch(() => props.title, () => {
+  response.value = null;
+  imgResponse.value = null;
+});
 
 const apiDictionary = [
   {
-    title: "qcsimg",
+    title: "qcs",
     subtitle: "浅草寺抽签:",
-    description: "浅草寺抽签的图：\n" +
-        "随机得到一张签纸，有对应的签运，解签。",
-    apiurl: "https://" + egweb + egport + "/qcsimg",
+    description:
+        "浅草寺著名一百签，随机得到一张签纸，有对应的签运，解签。" +
+        "可以指定return为json，默认为图片",
+    apiurl: egweb + egport + "/qcs",
     method: "GET",
-    params: {}
-  },
-  {
-    title: "qcsjson",
-    subtitle: "浅草寺抽签:",
-    description: "浅草寺抽签的json：\n" +
-        "以json格式随机得到一张签纸，有对应的签运，解签。",
-    apiurl: "https://" + egweb + egport + "/qcsjson",
-    method: "GET",
-    params: {}
+    params: {return: "img"}
   },
   {
     title: "xb",
     subtitle: "喜报:",
     description: "生成一张喜报。",
-    apiurl: "https://" + egweb + egport + "/xb",
+    apiurl: egweb + egport + "/xb",
     method: "GET",
     params: {content: "示例"}
   },
@@ -119,7 +120,7 @@ const apiDictionary = [
     title: "yesno",
     subtitle: "是 或 否:",
     description: "当你犹豫要不要干或者二选一的时候可以看看。",
-    apiurl: "https://" + egweb + egport + "/yesno",
+    apiurl: egweb + egport + "/yesno",
     method: "GET",
     params: {}
   },
@@ -135,9 +136,20 @@ const apiDictionary = [
     title: "phib19",
     subtitle: "Phigros成绩:",
     description: "上传你的session_token，返回你的b19成绩图。",
-    apiurl: "https://" + egweb + egport + "/phib19",
+    apiurl: egweb + egport + "/phib19",
     method: "GET",
     params: {session: "nkyjch88ydrg4js83bea9jyiw"}
+  },
+  {
+    title: "t2qr",
+    subtitle: "二维码生成:",
+    description: "文字转二维码。",
+    apiurl: egweb + egport + "/t2qr",
+    method: "GET",
+    params: {
+      text: "KFC，V我50",
+      size: "512"
+    }
   },
 ];
 
@@ -148,16 +160,6 @@ const apiData = computed(() => {
     return null;
   }
   return foundItem;
-});
-
-const response = ref(null);
-const imgResponse = ref(null);
-const randKey = ref(null);
-
-// 监听title的变化，当title变化时重置response
-watch(() => props.title, () => {
-  response.value = null;
-  imgResponse.value = null;
 });
 
 
@@ -227,6 +229,17 @@ function copyToClipboard(text) {
     console.error('无法复制文本: ', err);
   });
 }
+
+const fullApiUrl = computed(() => {
+  if (apiData.value.method !== 'GET') {
+    return apiData.value.apiurl; // 对于非GET请求，直接返回URL
+  }
+  const url = new URL(apiData.value.apiurl);
+  for (const [key, value] of Object.entries(apiData.value.params)) {
+    url.searchParams.append(key, value);
+  }
+  return url.toString();
+});
 </script>
 
 <style scoped>
@@ -363,6 +376,7 @@ function copyToClipboard(text) {
   position: relative;
   width: 50px;
   perspective: 200px;
+  margin-left: 5rem;
 }
 
 .loading:before,

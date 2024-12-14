@@ -13,7 +13,7 @@ import ApiCompo from "../components/ApiCompo.vue";
 const routes = [
     {
         path: '/',
-        redirect: '/home',
+        redirect: '/api',
         meta: {
             title: '首页说是',
         },
