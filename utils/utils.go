@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/FloatTech/gg"
 	"github.com/golang-jwt/jwt"
+	"github.com/skip2/go-qrcode"
 	"golang.org/x/crypto/bcrypt"
 	"image/jpeg"
 	"os"
@@ -192,4 +193,13 @@ func GenerateXBImage(content string) ([]byte, error) {
 	}
 
 	return buffer.Bytes(), nil
+}
+
+func QRCode(text string, size int) ([]byte, error) {
+	qr, err := qrcode.New(text, qrcode.Medium)
+	if err != nil {
+		return nil, err
+	}
+	qr.DisableBorder = true
+	return qr.PNG(size)
 }

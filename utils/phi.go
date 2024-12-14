@@ -26,6 +26,20 @@ var challengemoderank = []string{"white", "green", "blue", "red", "gold", "rainb
 
 var fontsd, _ = os.ReadFile(respath + Font)
 
+// 资源路径
+const (
+	// 课题模式图标
+	Challengemode = "challengemode/"
+	// 字体
+	Font = "font/font.ttf"
+	// 评级
+	Rank = "rank/"
+	// 曲绘
+	Illustration = "illustration/"
+	// 图标
+	Icon = "icon.png"
+)
+
 func GenPhiB19(session string) ([]byte, error) {
 	err := phigros.LoadDifficult("assets/difficulty.tsv")
 	if err != nil {

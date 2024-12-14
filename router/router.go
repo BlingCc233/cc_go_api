@@ -19,12 +19,12 @@ func SetupRouter() *gin.Engine {
 	api := r.Group("/api")
 	api.GET("/auth", controllers.TokenVerify)
 	api.GET("/exchangeRates", controllers.GetExchangeRates)
-	api.GET("/qcsimg", controllers.QCSLottery)
-	api.GET("/qcsjson", controllers.GetQCSJson)
+	api.GET("/qcs", controllers.QCSLottery)
 	api.GET("/get_wishes", controllers.GetWish)
 	api.GET("/xb", controllers.XBImg)
 	api.GET("/yesno", controllers.YesNo)
 	api.GET("/phib19", controllers.GetPhiB19)
+	api.GET("/t2qr", controllers.Text2QR)
 	api.Use(middleware.AuthMiddle())
 	{
 
