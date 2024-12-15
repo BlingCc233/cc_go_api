@@ -58,13 +58,13 @@ const slides = ref([]);
 onMounted(() => {
   for (let i = 1; i <= 18; i++) {
     if (i < 10) {
-      slides.value.push({image: `src/assets/slide/output_000${i}.jpg`, title: `Slide ${i}`});
+      slides.value.push({image: `/assets/slide/output_000${i}.jpg`, title: `Slide ${i}`});
     } else if (i < 100) {
-      slides.value.push({image: `src/assets/slide/output_00${i}.jpg`, title: `Slide ${i}`});
+      slides.value.push({image: `/assets/slide/output_00${i}.jpg`, title: `Slide ${i}`});
     } else if (i < 1000) {
-      slides.value.push({image: `src/assets/slide/output_0${i}.jpg`, title: `Slide ${i}`});
+      slides.value.push({image: `/assets/slide/output_0${i}.jpg`, title: `Slide ${i}`});
     } else {
-      slides.value.push({image: `src/assets/slide/output_${i}.jpg`, title: `Slide ${i}`});
+      slides.value.push({image: `/assets/slide/output_${i}.jpg`, title: `Slide ${i}`});
     }
   }
 });

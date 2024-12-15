@@ -71,12 +71,12 @@ button:focus-visible {
 
 @font-face {
   font-family:Log;
-  src: url('./assets/Sansation-Light.ttf');
+  src: url('../public/assets/Sansation-Light.ttf');
 }
 
 @font-face {
   font-family: ChiHei;
-  src: url('./assets/MiSans-Regular.ttf');
+  src: url('../public/assets/MiSans-Regular.ttf');
 }
 
 @media (prefers-color-scheme: light) {

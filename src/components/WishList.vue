@@ -17,7 +17,7 @@
             <input type="checkbox" :checked="wish.checked" @change="toggleCheck(wish.id)"/>
           </t-button>
           <t-popconfirm content="确认删除吗" @confirm="deleteWish(wish.id)">
-            <t-button variant="text" shape="square" >
+            <t-button variant="text" shape="square">
               <delete-icon/>
             </t-button>
           </t-popconfirm>
@@ -41,21 +41,27 @@ const wishes = ref([])
 const newWishContent = ref('')
 const user = Cookies.get('user')
 
-const avatar = (user) => {
-  if (!user) {
-    return 'src/assets/ico.png'
-  }
-  if (user === 'blingcc')
-    return 'src/assets/ccavatar.JPG'
-  if (user === 'lzhx')
-    return 'src/assets/lzhxavatar.JPG'
-  return `src/assets/ico.png`
-}
+
+
+ const avatar = (user) => {
+   if (!user) {
+     return '/assets/ico.png'
+   }
+   if (user === 'blingcc')
+     return '/assets/ccavatar.JPG'
+   if (user === 'lzhx')
+     return '/assets/lzhxavatar.JPG'
+   return import.meta.env.VITE_ASSETS_URL + 'ico.png'
+ }
+
+
+const egweb = import.meta.env.VITE_API_URL;
+const egport = import.meta.env.VITE_APP_API_PORT ? `:${import.meta.env.VITE_APP_API_PORT}` + '/api' : '/api';
 
 // 检查权限
 async function checkAuth() {
   // 附上Cookie的token作为header的Authorization
-  const response = await fetch('http://localhost:3051/api/auth', {
+  const response = await fetch(egweb + egport + '/auth', {
     headers: {
       Authorization: `${Cookies.get('token')}`
     }
@@ -69,7 +75,7 @@ async function checkAuth() {
 // 获取心愿单列表
 async function fetchWishes() {
   try {
-    const response = await fetch('http://localhost:3051/api/get_wishes', {
+    const response = await fetch(egweb + egport + '/get_wishes', {
       headers: {
         Authorization: `${Cookies.get('token')}`
       }
@@ -92,7 +98,7 @@ async function addWish(content) {
   }
 
   try {
-    const response = await fetch('http://localhost:3051/api/new_wish', {
+    const response = await fetch(egweb + egport + '/new_wish', {
       method: 'POST',
       headers: {
         'Authorization': `${Cookies.get('token')}`,
@@ -120,7 +126,7 @@ async function deleteWish(id) {
   //   return
   // }
   try {
-    const response = await fetch(`http://localhost:3051/api/delete_wish/${id}`, {
+    const response = await fetch(egweb + egport + `/delete_wish/${id}`, {
       method: 'DELETE',
       headers: {
         Authorization: `${Cookies.get('token')}`
@@ -138,7 +144,7 @@ async function deleteWish(id) {
 // 更新心愿单
 async function updateWish(id, content, checked) {
   try {
-    const response = await fetch(`http://localhost:3051/api/update_wish/${id}`, {
+    const response = await fetch(egweb + egport + `/update_wish/${id}`, {
       method: 'PUT',
       headers: {
         'Authorization': `${Cookies.get('token')}`,
@@ -160,7 +166,7 @@ async function toggleCheck(id) {
   const wish = wishes.value.data.find(wish => wish.id === id)
   if (wish) {
     try {
-      const response = await fetch(`http://localhost:3051/api/wish_check/${id}`, {
+      const response = await fetch(egweb + egport + `/wish_check/${id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `${Cookies.get('token')}`,
@@ -267,4 +273,5 @@ input[type="checkbox"]::before {
 input[type="checkbox"]:checked::before {
   transform: scale(1);
 }
+
 </style>

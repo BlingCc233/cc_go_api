@@ -5,8 +5,11 @@
 
 ## 运行方式
 
-`npm install`
 > [!NOTE]\
 > npm版本至少17
 
-`npm run dev`
+`npm install`
+
+`npm run build`
+
+`npm run preview`

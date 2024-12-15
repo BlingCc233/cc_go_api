@@ -1,7 +1,7 @@
 <template>
   <t-menu theme="dark" :collapsed="isCollapsed" :value="activeItem" @change="changeHandler">
     <template #logo>
-      <img height="28" src="../assets/ico.png" alt="logo"/>
+      <img height="28" src="../../public/assets/ico.png" alt="logo"/>
       <span style="font-size: 1.7rem; font-family: Log; user-select: none; padding-left: 20px">API</span>
     </template>
     <t-menu-item v-for="(item, index) in menuItems" :key="index" :value="`item${index + 1}`"

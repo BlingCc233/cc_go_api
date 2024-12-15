@@ -1,7 +1,7 @@
 <template>
   <t-menu theme="light" width="232px" :value="activeItem" @change="changeHandler">
     <template #logo>
-      <img height="28" src="../assets/ico.png" alt="logo"/>
+      <img height="28" src="../../public/assets/ico.png" alt="logo"/>
       <span style="font-size: 1.7rem; font-family: Log; user-select: none">BlingCc</span>
     </template>
     <t-menu-item v-for="(item, index) in menuItems" :key="index" :value="`item${index + 1}`">
@@ -67,7 +67,7 @@ const changeHandler = (active: string) => {
 const clearCookie = () => {
   Cookies.remove('token');
   Cookies.remove('user');
-  window.location.href = '/';
+  window.location.href = '/home';
 }
 </script>
 

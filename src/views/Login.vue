@@ -76,7 +76,7 @@ export default {
 }
 
 .bg {
-  background-image: url("../assets/login_bg.JPG");
+  background-image: url("../../public/assets/login_bg.JPG");
   background-size: contain;
   position: fixed; /* 固定背景 */
   top: 0;

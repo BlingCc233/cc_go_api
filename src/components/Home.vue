@@ -4,7 +4,7 @@
       <div class="home-container">
         <div class="mainLogo">
           <div class="paraCard">
-            <img height="232px" src="../assets/ico.png" alt="logo"/>
+            <img height="232px" src="../../public/assets/ico.png" alt="logo"/>
           </div>
         </div>
         <div class="slogen">

@@ -1,6 +1,7 @@
 <template>
   <div style="width: 350px">
-    <t-form ref="form" :data="formData" :colon="true" :label-width="0" @reset="onReset" @submit="onSubmit" style="text-align: center">
+    <t-form ref="form" :data="formData" :colon="true" :label-width="0" @reset="onReset" @submit="onSubmit"
+            style="text-align: center">
       <t-form-item name="account">
         <t-input size="large" v-model="formData.Username" clearable placeholder="请输入账户名">
           <template #prefix-icon>
@@ -39,10 +40,14 @@ const formData = reactive({
 const onReset = () => {
   MessagePlugin.success('重置成功');
 };
+
+const egweb = import.meta.env.VITE_API_URL;
+const egport = import.meta.env.VITE_APP_API_PORT ? `:${import.meta.env.VITE_APP_API_PORT}` + '/api' : '/api';
+
 const onSubmit = async () => {
 
   try {
-    const response = await fetch('http://localhost:3051/api/auth/login', {
+    const response = await fetch(egweb + egport + '/auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -54,7 +59,7 @@ const onSubmit = async () => {
       const data = await response.json();
       MessagePlugin.success('登录成功');
       await Cookies.set('token', data.token, {expires: 7});
-      await Cookies.set('user', formData.Username, {expires:7});
+      await Cookies.set('user', formData.Username, {expires: 7});
 
       router.push('/home');
       console.log(data);
@@ -83,6 +88,7 @@ const onSubmit = async () => {
   padding: 10px 0 10px 0;
   transition: all 0.5s ease;
 }
+
 .loginButton:hover {
   background-color: #2f8bcccc;
   cursor: pointer;
