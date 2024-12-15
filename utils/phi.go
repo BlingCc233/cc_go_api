@@ -182,8 +182,7 @@ func DrawB19(accuracy float64, j phigros.UserRecord, allrks, chal, chalnum, uid 
 	}
 	wg.Wait()
 	buffer := new(bytes.Buffer)
-	canvas.SavePNG(respath + uid + "/output5.png")
-
+	//canvas.SavePNG(respath + uid + "/output5.png")
 	if err := jpeg.Encode(buffer, canvas.Image(), nil); err != nil {
 		return nil, fmt.Errorf("failed to encode image: %w", err)
 	}

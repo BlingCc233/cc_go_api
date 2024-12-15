@@ -1,10 +1,10 @@
 app:
-  name: CurrencyExchangeApp
+  name: CcAPI
   port: :3051
 
 database:
   host: localhost
   port: :3306
-  user: root
-  password: N3do.666
-  name: currency_exchange_db
+  user: blingcc
+  password: cc233
+  name: ccapi_db

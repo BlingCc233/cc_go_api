@@ -201,5 +201,9 @@ func QRCode(text string, size int) ([]byte, error) {
 		return nil, err
 	}
 	qr.DisableBorder = true
+	if size > 1024 || size <= 0 {
+		size = 1024
+	}
 	return qr.PNG(size)
+
 }
