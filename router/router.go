@@ -24,6 +24,7 @@ func SetupRouter() *gin.Engine {
 	api.GET("/yesno", controllers.YesNo)
 	api.GET("/phib19", controllers.GetPhiB19)
 	api.GET("/t2qr", controllers.Text2QR)
+	api.GET("/sswd", controllers.GetSswd)
 	api.Use(middleware.AuthMiddle())
 	{
 		api.POST("/new_wish", controllers.NewWish)

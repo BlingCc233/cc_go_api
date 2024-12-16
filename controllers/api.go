@@ -15,12 +15,11 @@ func QCSLottery(context *gin.Context) {
 	isJson := context.Query("return")
 
 	var qcs models.QCS
+	var count int64
+	global.Db.Model(&qcs).Count(&count)
 
-	// 设置随机种子
 	rand.Seed(time.Now().UnixNano())
-
-	// 随机生成一个1到100的ID
-	id := rand.Intn(100) + 1
+	id := rand.Int63n(count) + 1
 
 	err := global.Db.Where("id = ?", id).First(&qcs).Error
 	if err != nil {
@@ -93,4 +92,27 @@ func Text2QR(context *gin.Context) {
 		return
 	}
 	context.Data(http.StatusOK, "image/png", imageData)
+}
+
+// 获取谁是卧底词
+func GetSswd(context *gin.Context) {
+	var wd models.WhosSpy
+	var count int64
+	global.Db.Model(&wd).Count(&count)
+	rand.Seed(time.Now().UnixNano())
+	id := rand.Int63n(count) + 1
+	err := global.Db.Where("id = ?", id).First(&wd).Error
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get word"})
+		return
+	}
+
+	// 创建一个不包含 ID 的新对象
+	responseData := gin.H{
+		"word1": wd.Word1,
+		"word2": wd.Word2,
+	}
+
+	// 返回去掉 ID 的数据
+	context.JSON(http.StatusOK, gin.H{"data": responseData})
 }
