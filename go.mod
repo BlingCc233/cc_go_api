@@ -3,6 +3,7 @@ module studyGo
 go 1.20
 
 require (
+	github.com/6tail/lunar-go v1.3.15
 	github.com/FloatTech/gg v1.1.3
 	github.com/disintegration/imaging v1.6.2
 	github.com/gin-gonic/gin v1.10.0

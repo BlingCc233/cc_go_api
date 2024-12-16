@@ -1,10 +1,12 @@
 package controllers
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"math/rand"
 	"net/http"
 	"strconv"
+	"strings"
 	"studyGo/global"
 	"studyGo/models"
 	"studyGo/utils"
@@ -15,13 +17,8 @@ func QCSLottery(context *gin.Context) {
 	isJson := context.Query("return")
 
 	var qcs models.QCS
-	var count int64
-	global.Db.Model(&qcs).Count(&count)
 
-	rand.Seed(time.Now().UnixNano())
-	id := rand.Int63n(count) + 1
-
-	err := global.Db.Where("id = ?", id).First(&qcs).Error
+	err := global.Db.Order("RAND()").First(&qcs).Error
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get QCS Lottery"})
 		return
@@ -97,11 +94,7 @@ func Text2QR(context *gin.Context) {
 // 获取谁是卧底词
 func GetSswd(context *gin.Context) {
 	var wd models.WhosSpy
-	var count int64
-	global.Db.Model(&wd).Count(&count)
-	rand.Seed(time.Now().UnixNano())
-	id := rand.Int63n(count) + 1
-	err := global.Db.Where("id = ?", id).First(&wd).Error
+	err := global.Db.Order("RAND()").First(&wd).Error
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get word"})
 		return
@@ -115,4 +108,24 @@ func GetSswd(context *gin.Context) {
 
 	// 返回去掉 ID 的数据
 	context.JSON(http.StatusOK, gin.H{"data": responseData})
+}
+
+func GetHoliday(context *gin.Context) {
+	isJson := context.Query("return")
+
+	now := time.Now()
+	holiday := utils.GetHolidays(now)
+
+	if isJson == "json" {
+		context.JSON(http.StatusOK, gin.H{"data": holiday})
+	} else {
+		// 整合为一个字符串
+		var holidayStrings []string
+		for _, cd := range holiday {
+			holidayStrings = append(holidayStrings, fmt.Sprintf("距离%s还有：%d天\n", cd.Name, cd.Days))
+		}
+		holidayString := strings.Join(holidayStrings, " ")
+		context.String(http.StatusOK, holidayString)
+	}
+
 }
