@@ -39,7 +39,9 @@ const menuItems = [
   {text: "yes/no", path: "/api/yesno", icon: "chat-bubble-help"},
   {text: "QQ机器人", path: "/api/qqBot", icon: "accessibility"},
   {text: "Phi成绩", path: "/api/phib19", icon: "collage"},
-  {text: "二维码生成", path: "/api/t2qr", icon: "qrcode"}
+  {text: "二维码生成", path: "/api/t2qr", icon: "qrcode"},
+  {text: "谁是卧底", path: "/api/sswd", icon: "usergroup-clear"},
+  {text: "节日倒计时", path: "/api/holiday", icon: "time"}
 ];
 
 // 更新激活的菜单项

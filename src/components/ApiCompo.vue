@@ -38,7 +38,7 @@
         </div>
       </t-col>
 
-      <t-col :span="2">
+      <t-col :span="2" class="midDes">
         <div class="loading" v-if="loading"></div>
       </t-col>
 
@@ -151,6 +151,22 @@ const apiDictionary = [
       size: "512"
     }
   },
+  {
+    title: "sswd",
+    subtitle: "谁是卧底:",
+    description: "返回一对词语，可用作谁是卧底游戏。",
+    apiurl: egweb + egport + "/sswd",
+    method: "GET",
+    params: {}
+  },
+  {
+    title: "holiday",
+    subtitle: "节假日倒计时:",
+    description: "返回节日距离时间的接口，可指定返回类型为 json或string，默认为字符串。",
+    apiurl: egweb + egport + "/holiday",
+    method: "GET",
+    params: {return: "json"}
+  }
 ];
 
 const apiData = computed(() => {
@@ -186,15 +202,21 @@ async function fetchApiData() {
 
     const res = await fetch(url, options);
 
+    // 生成一个随机数
+    randKey.value = Math.random().toString(36).substring(2, 15);
+
     if (res.headers.get('content-type').startsWith('image/')) {
       const blob = await res.blob();
       imgResponse.value = URL.createObjectURL(blob);
       return;
     }
 
+    if (res.headers.get('content-type').startsWith('text/plain')) {
+      response.value = await res.text();
+      return
+    }
+
     const data = await res.json();
-    // 生成一个随机数
-    randKey.value = Math.random().toString(36).substring(2, 15);
     response.value = JSON.stringify(data, null, 2);
   } catch (error) {
     console.error('Error fetching API data:', error);
@@ -371,12 +393,18 @@ const fullApiUrl = computed(() => {
   box-shadow: 0 0 25px 10px hsla(0, 0%, 0%, .1);
 }
 
+.midDes{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 
 .loading {
   position: relative;
   width: 50px;
   perspective: 200px;
-  margin-left: 5rem;
 }
 
 .loading:before,
